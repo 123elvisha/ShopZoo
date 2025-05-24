@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout Process</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@latest/css/boxicons.min.css">
+    <style>
+        :root {
+            --primary-color: #2196f3;
+            --secondary-color: #1976d2;
+            --background: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #333;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .checkout-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .checkout-steps {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .step.active .step-number {
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .checkout-content {
+            padding: 30px;
+        }
+
+        .checkout-section {
+            display: none;
+        }
+
+        .checkout-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .btn-next {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-prev {
+            background: #ddd;
+            color: var(--text-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .payment-method {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary-color);
+        }
+
+        .payment-method.selected {
+            border-color: var(--primary-color);
+            background: rgba(33, 150, 243, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .checkout-steps {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        /* New styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .loading-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        .success-checkmark {
+            display: none;
+            color: #4CAF50;
+            font-size: 80px;
+        }
+
+        .order-details {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .payment-details {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .error-message {
+            color: #ff0000;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Invoice Styles */
+.invoice-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.invoice-header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #eee;
+}
+
+.invoice-addresses {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
+
+.invoice-items table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.invoice-items th,
+.invoice-items td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.invoice-totals {
+    margin-left: auto;
+    width: 300px;
+}
+
+.totals-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+}
+
+.totals-row.total {
+    font-weight: bold;
+    border-top: 2px solid #ddd;
+    padding-top: 10px;
+}
+
+.invoice-footer {
+    margin-top: 30px;
+    text-align: center;
+    color: #666;
+}
+    </style>
+</head>
+<body>
+    <div class="loading-screen">
+        <div class="loading-circle"></div>
+        <i class='bx bx-check-circle success-checkmark'></i>
+        <div class="order-details">
+            <h3>Order Placed Successfully!</h3>
+            <p>Order Number: <span id="order-number"></span></p>
+            <p>Date: <span id="order-date"></span></p>
+            <p>Time: <span id="order-time"></span></p>
+        </div>
+    </div>
+
+    <div class="checkout-container">
+        <div class="checkout-steps">
+            <div class="step active" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-label">Billing Address</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-label">Shipping Info</div>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-number">3</div>
+                <div class="step-label">Payment</div>
+            </div>
+        </div>
+
+        <div class="checkout-content">
+            <!-- Billing Address Section -->
+            <div class="checkout-section active" id="billing">
+                <h2>Billing Address</h2>
+                <form id="billing-form">
+                    <div class="form-group">
+                        <label for="fullname">Full Name</label>
+                        <input type="text" id="fullname" required>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" required>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" required>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="zipcode">Zip Code</label>
+                        <input type="text" id="zipcode" required>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-next" onclick="nextStep(1)">Next</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Shipping Info Section -->
+            <div class="checkout-section" id="shipping">
+                <h2>Shipping Information</h2>
+                <form id="shipping-form">
+                    <div class="form-group">
+                        <label for="shipping-method">Shipping Method</label>
+                        <select id="shipping-method" required>
+                            <option value="standard">Standard Shipping (Free)</option>
+                            <option value="express">Express Shipping (₹100)</option>
+                            <option value="overnight">Overnight Shipping (₹200)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="special-instructions">Special Instructions</label>
+                        <input type="text" id="special-instructions">
+                    </div>
+                    <div class="button-group">
+                        <button type="button" class="btn btn-prev" onclick="prevStep(2)">Previous</button>
+                        <button type="button" class="btn btn-next" onclick="nextStep(2)">Next</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Payment Section -->
+            <div class="checkout-section" id="payment">
+                <h2>Payment Method</h2>
+                <div class="payment-methods">
+                    <div class="payment-method" data-method="card">
+                        <i class='bx bx-credit-card'></i>
+                        <span>Credit/Debit Card</span>
+                    </div>
+                    <div class="payment-method" data-method="upi">
+                        <i class='bx bx-mobile'></i>
+                        <span>UPI Payment</span>
+                    </div>
+                    <div class="payment-method" data-method="cod">
+                        <i class='bx bx-money'></i>
+                        <span>Cash on Delivery</span>
+                    </div>
+                </div>
+
+                <!-- Card Payment Details -->
+                <div class="payment-details" id="card-details">
+                    <div class="form-group">
+                        <label for="card-number">Card Number</label>
+                        <input type="text" id="card-number" maxlength="16" placeholder="1234 5678 9012 3456">
+                        <div class="error-message" id="card-number-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="card-name">Cardholder Name</label>
+                        <input type="text" id="card-name" placeholder="Name on card">
+                        <div class="error-message" id="card-name-error"></div>
+                    </div>
+                    <div style="display: flex; gap: 20px;">
+                        <div class="form-group">
+                            <label for="expiry">Expiry Date</label>
+                            <input type="text" id="expiry" placeholder="MM/YY" maxlength="5">
+                            <div class="error-message" id="expiry-error"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="password" id="cvv" maxlength="3" placeholder="123">
+                            <div class="error-message" id="cvv-error"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- UPI Payment Details -->
+                <div class="payment-details" id="upi-details">
+                    <div class="form-group">
+                        <label for="upi-id">UPI ID</label>
+                        <input type="text" id="upi-id" placeholder="username@upi">
+                        <div class="error-message" id="upi-error"></div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-prev" onclick="prevStep(3)">Previous</button>
+                    <button type="button" class="btn btn-next" onclick="processPayment()">Place Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Invoice Template (Initially Hidden) -->
+<div id="invoice-template" style="display: none;">
+    <div class="invoice-container">
+        <div class="invoice-header">
+            <h2>INVOICE</h2>
+            <div class="invoice-info">
+                <p>Invoice #: <span id="invoice-number"></span></p>
+                <p>Date: <span id="invoice-date"></span></p>
+            </div>
+        </div>
+        
+        <div class="invoice-addresses">
+            <div class="from-address">
+                <h3>From:</h3>
+                <p>Your Company Name</p>
+                <p>123 Business Street</p>
+                <p>City, State, ZIP</p>
+                <p>Phone: (123) 456-7890</p>
+            </div>
+            <div class="to-address">
+                <h3>Bill To:</h3>
+                <p id="invoice-customer-name"></p>
+                <p id="invoice-customer-address"></p>
+                <p id="invoice-customer-city"></p>
+                <p id="invoice-customer-email"></p>
+            </div>
+        </div>
+
+        <div class="invoice-items">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody id="invoice-items-body">
+                    <!-- Items will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="invoice-totals">
+            <div class="totals-row">
+                <span>Subtotal:</span>
+                <span id="invoice-subtotal"></span>
+            </div>
+            <div class="totals-row">
+                <span>Shipping:</span>
+                <span id="invoice-shipping"></span>
+            </div>
+            <div class="totals-row">
+                <span>Tax (18%):</span>
+                <span id="invoice-tax"></span>
+            </div>
+            <div class="totals-row total">
+                <span>Total:</span>
+                <span id="invoice-total"></span>
+            </div>
+        </div>
+
+        <div class="invoice-footer">
+            <p>Thank you for your business!</p>
+        </div>
+    </div>
+</div>
+    <script>
+        let currentStep = 1;
+        let selectedPaymentMethod = null;
+let orderDetails = {
+    itemName: 'Product A',
+    itemQuantity: 1,
+    itemPrice: 10.00,
+    paymentMethod: null,
+};
+
+function handlePaymentMethodSelection(method) {
+    selectedPaymentMethod = method.dataset.method;
+    orderDetails.paymentMethod = selectedPaymentMethod;
+    
+    document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected'));
+    method.classList.add('selected');
+    
+    document.querySelectorAll('.payment-details').forEach(detail => {
+        detail.style.display = 'none';
+    });
+    
+    if (selectedPaymentMethod === 'card') {
+        document.getElementById('card-details').style.display = 'block';
+    } else if (selectedPaymentMethod === 'upi') {
+        document.getElementById('upi-details').style.display = 'block';
+    }
+}
+
+function validateBillingForm() {
+    const fields = ['fullname', 'email', 'address', 'city', 'zipcode'];
+    let isValid = true;
+
+    fields.forEach(field => {
+        const input = document.getElementById(field);
+        const value = input.value.trim();
+        const errorDiv = input.nextElementSibling;
+
+        if (!value) {
+            isValid = false;
+            input.style.borderColor = 'red';
+            if (errorDiv && errorDiv.className === 'error-message') {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'This field is required';
+            }
+        } else if (field === 'email' && !isValidEmail(value)) {
+            isValid = false;
+            input.style.borderColor = 'red';
+            if (errorDiv && errorDiv.className === 'error-message') {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'Please enter a valid email address';
+            }
+        } else {
+            input.style.borderColor = '#ddd';
+            if (errorDiv && errorDiv.className === 'error-message') {
+                errorDiv.style.display = 'none';
+            }
+        }
+    });
+
+    return isValid;
+}
+
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+function processPayment() {
+    if (!selectedPaymentMethod) {
+        alert('Please select a payment method');
+        return;
+    }
+
+    if (selectedPaymentMethod === 'card' && !validateCardDetails()) return;
+    if (selectedPaymentMethod === 'upi' && !validateUPIDetails()) return;
+    
+    if (!validateBillingForm()) {
+        alert('Please fill in all required fields correctly');
+        return;
+    }
+
+    const loadingScreen = document.querySelector('.loading-screen');
+    loadingScreen.style.display = 'flex';
+
+    setTimeout(() => {
+        const orderNumber = generateOrderNumber();
+        const orderDate = new Date().toLocaleDateString();
+        const orderTime = new Date().toLocaleTimeString();
+
+        document.getElementById('order-number').textContent = orderNumber;
+        document.getElementById('order-date').textContent = orderDate;
+        document.getElementById('order-time').textContent = orderTime;
+
+        generateInvoice();
+        storeOrderDetails();
+
+        document.querySelector('.loading-circle').style.display = 'none';
+        document.querySelector('.success-checkmark').style.display = 'block';
+        document.querySelector('.order-details').style.display = 'block';
+    }, 2000);
+}
+
+document.querySelectorAll('.payment-method').forEach(method => {
+    method.addEventListener('click', () => handlePaymentMethodSelection(method));
+});
+
+function submitOrder() {
+    console.log('Submitting Order:', orderDetails);
+}
+
+// Validate billing form fields
+function validateBillingForm() {
+    const fields = ['fullname', 'email', 'address', 'city', 'zipcode'];
+    let isValid = true;
+
+    fields.forEach(field => {
+        const input = document.getElementById(field);
+        const value = input.value.trim();
+        const errorDiv = input.nextElementSibling;
+        
+        if (!value) {
+            isValid = false;
+            input.style.borderColor = 'red';
+            if (errorDiv && errorDiv.className === 'error-message') {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'This field is required';
+            }
+        } else {
+            input.style.borderColor = '#ddd';
+            if (errorDiv && errorDiv.className === 'error-message') {
+                errorDiv.style.display = 'none';
+            }
+        }
+    });
+
+    return isValid;
+}
+
+// Handle step navigation
+function nextStep(step) {
+    if (step === 1 && !validateBillingForm()) {
+        return;
+    }
+    currentStep = step + 1;
+    updateSteps();
+}
+
+function prevStep(step) {
+    currentStep = step - 1;
+    updateSteps();
+}
+
+// Update UI for current step
+function updateSteps() {
+    const steps = document.querySelectorAll('.step');
+    const sections = document.querySelectorAll('.checkout-section');
+
+    steps.forEach((step, index) => {
+        step.classList.toggle('active', index + 1 === currentStep);
+    });
+
+    sections.forEach((section, index) => {
+        section.classList.toggle('active', index + 1 === currentStep);
+    });
+}
+
+// Generate unique order number
+function generateOrderNumber() {
+    return 'ORD' + Date.now().toString().slice(-8) + Math.random().toString(36).substr(2, 4).toUpperCase();
+}
+
+// Validate card payment details
+function validateCardDetails() {
+    const fields = ['card-number', 'card-name', 'expiry', 'cvv'];
+    let isValid = true;
+
+    fields.forEach(field => {
+        const input = document.getElementById(field);
+        const value = input.value.trim();
+        const errorDiv = document.getElementById(`${field}-error`);
+        
+        if (!value) {
+            isValid = false;
+            input.style.borderColor = 'red';
+            if (errorDiv) {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'This field is required';
+            }
+        } else {
+            input.style.borderColor = '#ddd';
+            if (errorDiv) {
+                errorDiv.style.display = 'none';
+            }
+        }
+    });
+
+    return isValid;
+}
+
+// Validate UPI details
+function validateUPIDetails() {
+    const upiId = document.getElementById('upi-id');
+    const value = upiId.value.trim();
+    const errorDiv = document.getElementById('upi-error');
+    
+    if (!value) {
+        upiId.style.borderColor = 'red';
+        if (errorDiv) {
+            errorDiv.style.display = 'block';
+            errorDiv.textContent = 'This field is required';
+        }
+        return false;
+    } 
+    upiId.style.borderColor = '#ddd';
+    if (errorDiv) {
+        errorDiv.style.display = 'none';
+    }
+    return true;
+}
+
+// Generate invoice
+function generateInvoice() {
+    const customerName = document.getElementById('fullname').value;
+    const customerEmail = document.getElementById('email').value;
+    const customerAddress = document.getElementById('address').value;
+    const customerCity = document.getElementById('city').value;
+    const shippingMethod = document.getElementById('shipping-method').value;
+
+    // Set invoice details
+    document.getElementById('invoice-number').textContent = generateOrderNumber();
+    document.getElementById('invoice-date').textContent = new Date().toLocaleDateString();
+    document.getElementById('invoice-customer-name').textContent = customerName;
+    document.getElementById('invoice-customer-address').textContent = customerAddress;
+    document.getElementById('invoice-customer-city').textContent = customerCity;
+    document.getElementById('invoice-customer-email').textContent = customerEmail;
+
+    // Sample cart items (replace with actual cart data)
+    const cartItems = [
+        { name: "Product 1", quantity: 2, price: 999.99 },
+        { name: "Product 2", quantity: 1, price: 499.99 }
+    ];
+
+    // Calculate totals
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shippingCost = shippingMethod === 'standard' ? 0 : 
+                        shippingMethod === 'express' ? 100 : 200;
+    const tax = subtotal * 0.18;
+    const total = subtotal + shippingCost + tax;
+
+    // Populate items table
+    const tbody = document.getElementById('invoice-items-body');
+    tbody.innerHTML = cartItems.map(item => `
+        <tr>
+            <td>${item.name}</td>
+            <td>${item.quantity}</td>
+            <td>₹${item.price.toFixed(2)}</td>
+            <td>₹${(item.price * item.quantity).toFixed(2)}</td>
+        </tr>
+    `).join('');
+
+    // Set totals
+    document.getElementById('invoice-subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+    document.getElementById('invoice-shipping').textContent = `₹${shippingCost.toFixed(2)}`;
+    document.getElementById('invoice-tax').textContent = `₹${tax.toFixed(2)}`;
+    document.getElementById('invoice-total').textContent = `₹${total.toFixed(2)}`;
+
+    sendInvoiceEmail(customerEmail);
+}
+
+// Mock function for sending invoice email
+function sendInvoiceEmail(email) {
+    console.log(`Sending invoice to ${email}`);
+    alert(`Invoice has been sent to ${email}`);
+}
+
+// Process payment
+function processPayment() {
+    if (!selectedPaymentMethod) {
+        alert('Please select a payment method');
+        return;
+    }
+
+    if (selectedPaymentMethod === 'card' && !validateCardDetails()) return;
+    if (selectedPaymentMethod === 'upi' && !validateUPIDetails()) return;
+
+    const loadingScreen = document.querySelector('.loading-screen');
+    loadingScreen.style.display = 'flex';
+
+    // Simulate payment processing
+    setTimeout(() => {
+        const orderNumber = generateOrderNumber();
+        const orderDate = new Date().toLocaleDateString();
+        const orderTime = new Date().toLocaleTimeString();
+
+        document.getElementById('order-number').textContent = orderNumber;
+        document.getElementById('order-date').textContent = orderDate;
+        document.getElementById('order-time').textContent = orderTime;
+
+        generateInvoice();
+
+        document.querySelector('.loading-circle').style.display = 'none';
+        document.querySelector('.success-checkmark').style.display = 'block';
+        document.querySelector('.order-details').style.display = 'block';
+    }, 2000);
+}
+
+// Initialize payment method selection
+document.querySelectorAll('.payment-method').forEach(method => { 
+    method.addEventListener('click', () => { 
+        const paymentMethod = method.dataset.method; 
+        selectedPaymentMethod = paymentMethod; 
+
+        document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('selected')); 
+        method.classList.add('selected'); 
+
+        document.querySelectorAll('.payment-details').forEach(detail => { 
+            detail.style.display = 'none'; 
+        }); 
+
+        if (selectedPaymentMethod === 'card') { 
+            document.getElementById('card-details').style.display = 'block'; 
+        } else if (selectedPaymentMethod === 'upi') { 
+            document.getElementById('upi-details').style.display = 'block'; 
+        } 
+    }); 
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    updateSteps();
+});
+function storeOrderDetails() {
+    const cartItems = [
+        { name: "Product 1", quantity: 2, price: 999.99 },
+        { name: "Product 2", quantity: 1, price: 499.99 }
+    ];
+
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const shippingMethod = document.getElementById('shipping-method').value;
+    const shippingCost = shippingMethod === 'standard' ? 0 : 
+                        shippingMethod === 'express' ? 100 : 200;
+    const tax = subtotal * 0.18;
+    const total = subtotal + shippingCost + tax;
+
+    const orderDetails = {
+        // Billing Details
+        billing: {
+            orderNumber: document.getElementById('order-number').textContent,
+            orderDate: new Date().toISOString(),
+            customerName: document.getElementById('fullname').value,
+            email: document.getElementById('email').value,
+            address: document.getElementById('address').value,
+            city: document.getElementById('city').value,
+            zipcode: document.getElementById('zipcode').value,
+            shippingMethod: shippingMethod,
+            paymentMethod: selectedPaymentMethod,
+            specialInstructions: document.getElementById('special-instructions').value
+        },
+        // Order Details
+        order: {
+            orderNumber: document.getElementById('order-number').textContent,
+            orderDate: new Date().toISOString(),
+            orderStatus: 'Confirmed',
+            items: cartItems,
+            subtotal: subtotal,
+            shippingCost: shippingCost,
+            tax: tax,
+            totalAmount: total,
+            paymentStatus: 'Paid',
+            paymentMethod: selectedPaymentMethod
+        }
+    };
+
+    // Send to server
+    fetch('http://localhost:3000/store-order-details', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderDetails)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Order details stored successfully:', data);
+    })
+    .catch(error => {
+        console.error('Error storing order details:', error);
+       
+});
+}
+
+// Modify your processPayment function
+function processPayment() {
+    if (!selectedPaymentMethod) {
+        alert('Please select a payment method');
+        return;
+    }
+
+    if (selectedPaymentMethod === 'card' && !validateCardDetails()) return;
+    if (selectedPaymentMethod === 'upi' && !validateUPIDetails()) return;
+
+    const loadingScreen = document.querySelector('.loading-screen');
+    loadingScreen.style.display = 'flex';
+
+    // Simulate payment processing
+    setTimeout(() => {
+        const orderNumber = generateOrderNumber();
+        const orderDate = new Date().toLocaleDateString();
+        const orderTime = new Date().toLocaleTimeString();
+
+        document.getElementById('order-number').textContent = orderNumber;
+        document.getElementById('order-date').textContent = orderDate;
+        document.getElementById('order-time').textContent = orderTime;
+
+        generateInvoice();
+        storeOrderDetails(); // Store both billing and order details
+
+        document.querySelector('.loading-circle').style.display = 'none';
+        document.querySelector('.success-checkmark').style.display = 'block';
+        document.querySelector('.order-details').style.display = 'block';
+    }, 2000);
+}
+// Backend code (Node.js with Express and Excel.js)
+const express = require('express');
+const ExcelJS = require('exceljs');
+const path = require('path');
+const app = express();
+
+app.use(express.json());
+
+// Configure Excel workbook
+const workbook = new ExcelJS.Workbook();
+const billingWorksheet = workbook.addWorksheet('Billing Records');
+const orderWorksheet = workbook.addWorksheet('Order Records');
+const orderItemsWorksheet = workbook.addWorksheet('Order Items');
+
+// Set up billing worksheet headers
+billingWorksheet.columns = [
+    { header: 'Order Number', key: 'orderNumber', width: 15 },
+    { header: 'Order Date', key: 'orderDate', width: 20 },
+    { header: 'Customer Name', key: 'customerName', width: 20 },
+    { header: 'Email', key: 'email', width: 25 },
+    { header: 'Address', key: 'address', width: 30 },
+    { header: 'City', key: 'city', width: 15 },
+    { header: 'Zipcode', key: 'zipcode', width: 10 },
+    { header: 'Shipping Method', key: 'shippingMethod', width: 15 },
+    { header: 'Payment Method', key: 'paymentMethod', width: 15 },
+    { header: 'Special Instructions', key: 'specialInstructions', width: 30 }
+];
+
+// Set up order worksheet headers
+orderWorksheet.columns = [
+    { header: 'Order Number', key: 'orderNumber', width: 15 },
+    { header: 'Order Date', key: 'orderDate', width: 20 },
+    { header: 'Order Status', key: 'orderStatus', width: 15 },
+    { header: 'Customer Name', key: 'customerName', width: 20 },
+    { header: 'Subtotal', key: 'subtotal', width: 15 },
+    { header: 'Shipping Cost', key: 'shippingCost', width: 15 },
+    { header: 'Tax', key: 'tax', width: 15 },
+    { header: 'Total Amount', key: 'totalAmount', width: 15 },
+    { header: 'Payment Status', key: 'paymentStatus', width: 15 },
+    { header: 'Payment Method', key: 'paymentMethod', width: 15 }
+];
+
+// Set up order items worksheet headers
+orderItemsWorksheet.columns = [
+    { header: 'Order Number', key: 'orderNumber', width: 15 },
+    { header: 'Product Name', key: 'productName', width: 30 },
+    { header: 'Quantity', key: 'quantity', width: 10 },
+    { header: 'Price', key: 'price', width: 15 },
+    { header: 'Total', key: 'total', width: 15 }
+];
+
+// Style worksheet headers
+[billingWorksheet, orderWorksheet, orderItemsWorksheet].forEach(worksheet => {
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFD3D3D3' }
+    };
+});
+
+// Function to load existing records
+async function loadExistingRecords() {
+    try {
+        await workbook.xlsx.readFile('order_records.xlsx');
+        return true;
+    } catch (error) {
+        console.log('No existing file found, creating new one');
+        return false;
+    }
+}
+
+// Function to save workbook
+async function saveWorkbook() {
+    try {
+        await workbook.xlsx.writeFile('order_records.xlsx');
+        console.log('Records saved successfully');
+    } catch (error) {
+        console.error('Error saving records:', error);
+    }
+}
+
+// API endpoint to store order details
+app.post('/store-order-details', async (req, res) => {
+    try {
+        const { billing, order } = req.body;
+
+        // Load existing records if any
+        await loadExistingRecords();
+
+        // Add billing record
+        billingWorksheet.addRow({
+            orderNumber: billing.orderNumber,
+            orderDate: new Date(billing.orderDate).toLocaleString(),
+            customerName: billing.customerName,
+            email: billing.email,
+            address: billing.address,
+            city: billing.city,
+            zipcode: billing.zipcode,
+            shippingMethod: billing.shippingMethod,
+            paymentMethod: billing.paymentMethod,
+            specialInstructions: billing.specialInstructions
+        });
+
+        // Add order record
+        orderWorksheet.addRow({
+            orderNumber: order.orderNumber,
+            orderDate: new Date(order.orderDate).toLocaleString(),
+            orderStatus: order.orderStatus,
+            customerName: billing.customerName,
+            subtotal: order.subtotal,
+            shippingCost: order.shippingCost,
+            tax: order.tax,
+            totalAmount: order.totalAmount,
+            paymentStatus: order.paymentStatus,
+            paymentMethod: order.paymentMethod
+        });
+
+        // Add order items records
+        order.items.forEach(item => {
+            orderItemsWorksheet.addRow({
+                orderNumber: order.orderNumber,
+                productName: item.name,
+                quantity: item.quantity,
+                price: item.price,
+                total: item.price * item.quantity
+            });
+        });
+
+        // Style new rows
+        [billingWorksheet, orderWorksheet, orderItemsWorksheet].forEach(worksheet => {
+            const newRow = worksheet.lastRow;
+            newRow.eachCell((cell) => {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' }
+                };
+            });
+        });
+
+        // Save the workbook
+        await saveWorkbook();
+
+        res.json({ 
+            success: true, 
+            message: 'Order details stored successfully' 
+        });
+    } catch (error) {
+        console.error('Error storing order details:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to store order details' 
+        });
+    }
+});
+
+// API endpoint to get all order records
+app.get('/order-records', async (req, res) => {
+    try {
+        await loadExistingRecords();
+        const records = [];
+        orderWorksheet.eachRow((row, rowNumber) => {
+            if (rowNumber > 1) { // Skip header row
+                records.push({
+                    orderNumber: row.getCell('orderNumber').value,
+                    orderDate: row.getCell('orderDate').value,
+                    orderStatus: row.getCell('orderStatus').value,
+                    customerName: row.getCell('customerName').value,
+                    subtotal: row.getCell('subtotal').value,
+                    shippingCost: row.getCell('shippingCost').value,
+                    tax: row.getCell('tax').value,
+                    totalAmount: row.getCell('totalAmount').value,
+                    paymentStatus: row.getCell('paymentStatus').value,
+                    paymentMethod: row.getCell('paymentMethod').value
+                });
+            }
+        });
+        res.json(records);
+    } catch (error) {
+        console.error('Error retrieving order records:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to retrieve order records' 
+        });
+    }
+});
+
+// Start server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
+    </script>
+</body>
+</html> 

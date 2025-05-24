@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://kit.fontawesome.com/86d38bd613.js" crossorigin="anonymous"></script>
+</head>
+<link href='https://fonts.googleapis.com/css?family=Georgia' rel='stylesheet'>
+<body>
+    <video autoplay loop muted>
+        <source src="back3.mp4" >
+    </video>
+    
+    <section id="header">
+        <a href="#"><img src="logo2.png" class="logo" alt=""></a>
+        <nav>
+            <div class="nav-links" id="navlinks">
+                <ul id="navbar">
+                    <li>
+                        <a href="index.html" id="home-btn">
+                            <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                            <lord-icon
+                                src="https://cdn.lordicon.com/cnpvyndp.json"
+                                trigger="hover"
+                                style="width:30px;height:30px">
+                            </lord-icon>
+                        </a>
+                    </li>
+                    <li><a class="active" href="profile.html">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/kthelypq.json"
+                            trigger="hover"
+                            style="width:30px;height:30px">
+                        </lord-icon>
+                    </a></li>
+                    <li><a href="about.html">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/yxczfiyc.json"
+                            trigger="hover"
+                            style="width:30px;height:30px">
+                        </lord-icon>
+                    </a></li>
+                    <li><a href="contact.html">
+                        <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                        <lord-icon
+                            src="https://cdn.lordicon.com/rsvfayfn.json"
+                            trigger="hover"
+                            style="width:30px;height:30px">
+                        </lord-icon>
+                    </a></li>
+                    <div id="lg-bag">             
+                        <li>
+                            <a href="cart.html">
+                                <script src="https://cdn.lordicon.com/lordicon.js"></script>
+                                <lord-icon
+                                    src="https://cdn.lordicon.com/mfmkufkr.json"
+                                    trigger="hover"
+                                    style="width:30px;height:30px">
+                                </lord-icon>
+                                <span id="cart-count">0</span>
+                            </a>
+                        </li>
+                    </div>
+                </ul>
+            </div>
+        </nav>
+    </section>
+
+    <section id="profile" class="section-p1">
+        <h2>User Profile</h2>
+        <div class="profile-container">
+            <div class="profile-image">
+                <img id="profile-pic" src="profile.jpg" alt="Profile Picture">
+                <input type="file" id="image-upload" accept="image/*" style="display: none;">
+                <button class="normal" id="change-picture-btn">Change Picture</button>
+            </div>
+            <div class="profile-details">
+                <h3>Personal Information</h3>
+                <form id="user-info-form">
+                    <div class="form-group">
+                        <label for="name">Name:</label>
+                        <input type="text" id="name" name="name" value="John Doe" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" value="johndoe@example.com" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone:</label>
+                        <input type="tel" id="phone" name="phone" value="+91 1234567890" readonly>
+                    </div>
+                    <button type="button" id="edit-btn" class="normal">Edit</button>
+                    <button type="submit" id="save-btn" class="normal" style="display: none;">Save Changes</button>
+                </form>
+            </div>
+            <div class="order-history">
+                <h3>Order History</h3>
+                <table>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Order Date</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>#1234</td>
+                        <td>2024-02-20</td>
+                        <td>₹500.00</td>
+                        <td>Delivered</td>
+                    </tr>
+                    <tr>
+                        <td>#5678</td>
+                        <td>2024-03-15</td>
+                        <td>₹800.00</td>
+                        <td>Pending</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <footer class="section-p1">
+        <div class="footer-content">
+            <div class="footer-main">
+                <div class="col">
+                    <img class="logo" src="logo2.png" alt="ShopZoo Logo">
+                    <h4>Contact</h4>
+                    <p><strong>Address:</strong> Sector-26 Link Road, Chandigarh, India</p>
+                    <p><strong>Phone:</strong> +91 7090399999 / 9000000929</p>
+                    <p><strong>Hours:</strong> 10:00 - 18:00, Mon-Sat</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col">
+                    <h4>About</h4>
+                    <a href="about.html">About us</a>
+                    <a href="#">Delivery Information</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms & Conditions</a>
+                    <a href="#">Contact us</a>
+                </div>
+                <div class="col">
+                    <h4>My Account</h4>
+                    <a href="#">Sign In</a>
+                    <a href="#">View Cart</a>
+                    <a href="#">My Wishlist</a>
+                    <a href="#">Track My Order</a>
+                    <a href="#">Help</a>
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="col install">
+                    <h4>Install App</h4>
+                    <p>From App Store or Google Play</p>
+                    <div class="row">
+                        <img src="products/app.jpg" alt="App Store">
+                        <img src="products/play.jpg" alt="Google Play">
+                    </div>
+                    <p>Secured Payment Gateways</p>
+                    <img src="products/pay.png" alt="Payment Gateways">
+                </div>
+                <div class="col newsletter">
+                    <h4>Newsletter</h4>
+                    <p>Stay up to date with our latest offers and products</p>
+                    <form>
+                        <input type="email" placeholder="Your email address">
+                        <button type="submit">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="copyright">
+            <p>Copyright 2024, ShopZoo</p>
+        </div>
+    </footer>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
